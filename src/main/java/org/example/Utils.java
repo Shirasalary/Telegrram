@@ -1,6 +1,9 @@
 package org.example;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Utils {
 
@@ -28,5 +31,11 @@ public class Utils {
         button.setFocusable(false);
         button.setFont(Constants.myFont);
         return button;
+    }
+
+    public static List<String> convertArrayToList(String[] array){
+        List<String> result = new ArrayList<>();
+        result.addAll(Arrays.asList(array));
+        return result;
     }
 }

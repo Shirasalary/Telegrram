@@ -85,19 +85,19 @@ public class MainPanel extends JPanel {
     private List<String> getManagerChoose(){
         List<String> managerChoose = new LinkedList<>();
         if (this.jokesCheckBox.isSelected()){
-            managerChoose.add("Joke");
+            managerChoose.add(Constants.JOKE_API);
         }
         if (this.weatherCheckBox.isSelected()){
             managerChoose.add("Weather");
         }
         if (this.quotesCheckBox.isSelected()){
-            managerChoose.add("Quote");
+            managerChoose.add(Constants.QUOTE_API);
         }
         if (this.changeMoneyCheckBox.isSelected()){
             managerChoose.add("Currency exchange");
         }
         if (this.countriesCheckBox.isSelected()){
-            managerChoose.add("country");
+            managerChoose.add(Constants.COUNTRY_API);
         }
         return managerChoose;
     }

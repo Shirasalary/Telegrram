@@ -5,6 +5,8 @@ public class User {
     private static int ID = 0;
     private long chatId;
     private int id;
+    private int statusRequest;
+    private String apiTypeRequest;
 
     private int countRequest;
 
@@ -12,7 +14,25 @@ public class User {
         this.id = ID;
         ID++;
         this.chatId = chatId;
-        this.countRequest =0;
+        this.countRequest = 1;
+        this.statusRequest = Constants.START_REQUEST;
+        this.apiTypeRequest = "";
+    }
+
+    public boolean isEqualApiTypeRequest(String type) {
+        return this.apiTypeRequest.equals(type);
+    }
+
+    public void setApiTypeRequest(String apiTypeRequest) {
+        this.apiTypeRequest = apiTypeRequest;
+    }
+
+    public int getStatusRequest(){
+        return this.statusRequest;
+    }
+
+    public void setStatusRequest(int newStatus){
+        this.statusRequest = newStatus;
     }
 
     public void addRequest(){
