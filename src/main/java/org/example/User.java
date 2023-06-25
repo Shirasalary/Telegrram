@@ -39,7 +39,15 @@ public class User {
         this.countRequest++;
     }
 
+    public int getCountRequest() {
+        return this.countRequest;
+    }
+
     public boolean isEqualChatId(long toCheck){
         return this.chatId == toCheck;
+    }
+
+    public String toString(){
+        return "User -> Id Chat: " + this.chatId;
     }
 }

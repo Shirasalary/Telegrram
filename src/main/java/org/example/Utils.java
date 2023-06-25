@@ -33,7 +33,7 @@ public class Utils {
         return button;
     }
 
-    public static List<String> convertArrayToList(String[] array){
+    public static    List<String> convertArrayToList(String[] array){
         List<String> result = new ArrayList<>();
         result.addAll(Arrays.asList(array));
         return result;

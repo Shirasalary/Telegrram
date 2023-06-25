@@ -96,9 +96,10 @@ public class Country {
     }
 
     public String toString(){
-        return "name: " + this.name + "\n country 3 words code: " + this.alpha3Code +
-                "\n capital: " + this.capital + "\n languages: " + getPrintLanguages()
-                + "\n ";
+        return "name: " + this.name + "\ncountry 3 words code: " + this.alpha3Code +
+                "\ncapital: " + this.capital + "\nlanguages: " + getPrintLanguages()
+                + "\npopulation: " +this.population + "\nregion: " + this.region
+                + "\nindependent: " + this.independent + "\n";
     }
 
 }

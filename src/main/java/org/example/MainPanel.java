@@ -19,21 +19,29 @@ public class MainPanel extends JPanel {
     private JLabel showOptions;
     private JLabel informationForUser;
 
+    private Bot bot;
+
+    private Statistics statistics;
+
     private JButton update;
     public MainPanel(int x, int y, int width, int height){
         this.setBounds(x,y,width,height);
         this.setLayout(null);
         createObjects();
 
+        try{
+            TelegramBotsApi api = new TelegramBotsApi(DefaultBotSession.class);
+            this.bot = new Bot(new ArrayList<>());
+            api.registerBot(this.bot);
+        }catch (Exception exception){
+            throw new RuntimeException();
+        }
+
+        //TODO איך לעדכן את פעילות הבוט תוך כדי תנועה? אולי ליצור את המחלקה בחוץ בפעולה בונה ואז לעשות סט לרשימה
         this.update.addActionListener((e) -> {
             if (isValidChoose()){
                 //כאן הבוט מתחיל לפעול
-            try{
-            TelegramBotsApi api = new TelegramBotsApi(DefaultBotSession.class);
-            api.registerBot(new Bot(getManagerChoose()));
-             }catch (Exception exception){
-            throw new RuntimeException();
-            }
+                this.bot.setTypeApi(getManagerChoose());
 
             }else {
                 this.informationForUser.setText("Not valid choose");
@@ -69,6 +77,13 @@ public class MainPanel extends JPanel {
         this.update = Utils.newButton("Update", this.getX() +Constants.MARGIN_FROM_LEFT,
                 this.weatherCheckBox.getY()+Constants.CHECK_BOX_HEIGHT +Constants.MARGIN_FROM_TOP );
 
+        int xStatistics = this.showOptions.getX() + (Constants.LABEL_WIDTH/4)*3 ;
+        this.statistics = new Statistics(this.bot,xStatistics
+                ,this.getY() + Constants.MARGIN_FROM_TOP /2,
+                this.getWidth()- xStatistics,
+                this.getHeight()/4);
+
+
     }
 
     private void addObjects(){
@@ -80,6 +95,7 @@ public class MainPanel extends JPanel {
         this.add(this.showOptions);
         this.add(this.informationForUser);
         this.add(this.update);
+        this.add(this.statistics);
     }
 
     private List<String> getManagerChoose(){
@@ -94,7 +110,7 @@ public class MainPanel extends JPanel {
             managerChoose.add(Constants.QUOTE_API);
         }
         if (this.changeMoneyCheckBox.isSelected()){
-            managerChoose.add("Currency exchange");
+            managerChoose.add(Constants.EXCHANGE_API);
         }
         if (this.countriesCheckBox.isSelected()){
             managerChoose.add(Constants.COUNTRY_API);

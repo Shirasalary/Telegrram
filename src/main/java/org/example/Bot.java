@@ -16,8 +16,15 @@ public class Bot extends TelegramLongPollingBot {
     private List<User> users;
     private List<String> typeApi;
 
+    private Api apiProvider;
+
     public Bot(List<String> typeApi){
         this.users = new ArrayList<>();
+        this.typeApi = typeApi;
+        this.apiProvider = new Api();
+    }
+
+    public void setTypeApi(List<String> typeApi) {
         this.typeApi = typeApi;
     }
 
@@ -34,70 +41,88 @@ public class Bot extends TelegramLongPollingBot {
     //מה קורה בעת יצירת קשר עם הבוט זאת הפונקציה העיקרית
     @Override
     public void onUpdateReceived(Update update) {
-        //מדפיס את תוכן ההודעה הנשלחת
-        System.out.println("List size" + this.users.size());
+        if (!this.typeApi.isEmpty()){
+            //מדפיס את תוכן ההודעה הנשלחת
+            System.out.println("List size" + this.users.size());
 
-        long chatId = getChatID(update);
-        User user = isUserExist(chatId);
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
+            long chatId = getChatID(update);
+            User user = isUserExist(chatId);
+            SendMessage message = new SendMessage();
+            message.setChatId(chatId);
 
-        if ( user == null){ //אם היוזר לא קיים נוסיף אותו לרשימה
-            user = new User(chatId);
-            this.users.add(user);
-        }
-
-        if (user.getStatusRequest() == Constants.START_REQUEST){
-
-            message.setReplyMarkup(getKeyboard(this.typeApi,this.typeApi));
-            message.setText("which service you choose?");
-            user.setStatusRequest(Constants.REQUEST_IN_PROCESS);
-
-            user.addRequest();
-
-        }else if (user.getStatusRequest() == Constants.REQUEST_IN_PROCESS) {
-
-            if (update.getCallbackQuery().getData().equals(Constants.COUNTRY_API)){
-                message.setText("Please enter country name");
-                user.setStatusRequest(Constants.WAIT_TO_RESPOND);
-                user.setApiTypeRequest(Constants.COUNTRY_API);
-
-            } else if (update.getCallbackQuery().getData().equals(Constants.JOKE_API)) {
-                message.setReplyMarkup(getKeyboard(Utils.convertArrayToList(Constants.LANGUAGE),Utils.convertArrayToList(Constants.LANGUAGE_CODE)));
-                message.setText("Please choose language for joke");
-                user.setStatusRequest(Constants.WAIT_TO_RESPOND);
-                user.setApiTypeRequest(Constants.JOKE_API);
-
-            } else if (update.getCallbackQuery().getData().equals(Constants.QUOTE_API)) {
-                message.setReplyMarkup(getKeyboard(Utils.convertArrayToList(Constants.QUOTE_TAG),Utils.convertArrayToList(Constants.QUOTE_TAG_CODE)));
-                message.setText("Please choose tag for quote");
-                user.setStatusRequest(Constants.WAIT_TO_RESPOND);
-                user.setApiTypeRequest(Constants.QUOTE_API);
+            if ( user == null){ //אם היוזר לא קיים נוסיף אותו לרשימה
+                user = new User(chatId);
+                this.users.add(user);
             }
 
-        } else if (user.getStatusRequest() == Constants.WAIT_TO_RESPOND) {
+            if (user.getStatusRequest() == Constants.START_REQUEST){
 
-            if (user.isEqualApiTypeRequest(Constants.COUNTRY_API)){
-                //להפעיל API ןלשלוח לו את התשובה + לשנות את הסטטוס בקשה לסוף + לאפס את סוג הבקשה לריק
-            }else if (user.isEqualApiTypeRequest(Constants.JOKE_API)){
-                //להפעיל API ןלשלוח לו את התשובה + לשנות את הסטטוס בקשה לסוף + לאפס את סוג הבקשה לריק
-            } else if (user.isEqualApiTypeRequest(Constants.QUOTE_API)) {
-                //להפעיל API ןלשלוח לו את התשובה + לשנות את הסטטוס בקשה לסוף + לאפס את סוג הבקשה לריק
+                message.setReplyMarkup(getKeyboard(this.typeApi,this.typeApi));
+                message.setText("which service you choose?");
+                user.setStatusRequest(Constants.REQUEST_IN_PROCESS);
+
+                user.addRequest();
+
+            }else if (user.getStatusRequest() == Constants.REQUEST_IN_PROCESS) {
+
+                if (update.getCallbackQuery().getData().equals(Constants.COUNTRY_API)){
+                    message.setText("Please enter country name");
+                    user.setApiTypeRequest(Constants.COUNTRY_API);
+
+                } else if (update.getCallbackQuery().getData().equals(Constants.JOKE_API)) {
+                    message.setReplyMarkup(getKeyboard(Utils.convertArrayToList(Constants.LANGUAGE),Utils.convertArrayToList(Constants.LANGUAGE_CODE)));
+                    message.setText("Please choose language for joke");
+                    user.setApiTypeRequest(Constants.JOKE_API);
+
+                } else if (update.getCallbackQuery().getData().equals(Constants.QUOTE_API)) {
+                    message.setReplyMarkup(getKeyboard(Utils.convertArrayToList(Constants.QUOTE_TAG),Utils.convertArrayToList(Constants.QUOTE_TAG_CODE)));
+                    message.setText("Please choose tag for quote");
+
+                    user.setApiTypeRequest(Constants.QUOTE_API);
+                } else if (update.getCallbackQuery().getData().equals(Constants.EXCHANGE_API)) {
+                    message.setReplyMarkup(getKeyboard(Utils.convertArrayToList(Constants.EXCHANGE),Utils.convertArrayToList(Constants.EXCHANGE_CODE)));
+                    message.setText("Please choose a currency exchange");
+
+                    user.setApiTypeRequest(Constants.EXCHANGE_API);
+                }
+
+                user.setStatusRequest(Constants.WAIT_TO_RESPOND);
+
+            } else if (user.getStatusRequest() == Constants.WAIT_TO_RESPOND) {
+
+                String response = "";
+                if (user.isEqualApiTypeRequest(Constants.COUNTRY_API)){
+
+                    response = this.apiProvider.getCountriesByeName(update.getMessage().getText());
+
+                }else if (user.isEqualApiTypeRequest(Constants.JOKE_API)){
+
+                    response = this.apiProvider.getJokeByLanguage(update.getCallbackQuery().getData());
+
+                } else if (user.isEqualApiTypeRequest(Constants.QUOTE_API)) {
+
+                    response = this.apiProvider.getQuoteByTag(update.getCallbackQuery().getData());
+                }else if (user.isEqualApiTypeRequest(Constants.EXCHANGE_API)){
+                    //להפעיל API ןלשלוח לו את התשובה + לשנות את הסטטוס בקשה לסוף + לאפס את סוג הבקשה לריק
+                    response = this.apiProvider.getExchange(update.getCallbackQuery().getData());
+                }
+
+                response+= "\n Tank you for using as! send message for another request :)";
+                user.setStatusRequest(Constants.START_REQUEST);
+                user.setApiTypeRequest("");
+                message.setText(response);
             }
-        } else if (user.getStatusRequest() == Constants.END_REQUEST) {
-            message.setText("Tank you for using as! send message for another request :)");
-            user.setStatusRequest(Constants.START_REQUEST);
-        }
 
 
-        try {
-            System.out.println("send");
-            execute(message);
+            try {
+                System.out.println("send");
+                execute(message);
 
-        } catch (TelegramApiException e) {
-            System.out.println("no send");
-            throw new RuntimeException(e);
+            } catch (TelegramApiException e) {
+                System.out.println("no send");
+                throw new RuntimeException(e);
 
+            }
         }
 
     }
@@ -135,5 +160,39 @@ public class Bot extends TelegramLongPollingBot {
         return result;
     }
 
+    public int CountBotRequests(){
+        int count = 0;
+        for (int i =0 ;i<this.users.size();i++){
+            count+= this.users.get(i).getCountRequest();
+        }
+        return count;
+    }
+
+    public int countUsers(){
+        return this.users.size();
+    }
+
+    public String mostActiveUser(){
+        String result ="";
+        int max = 0;
+        User user = null;
+        for (int i =0 ;i<this.users.size();i++){
+           if (this.users.get(i).getCountRequest() > max){
+               max = this.users.get(i).getCountRequest();
+               user = this.users.get(i);
+           }
+        }
+
+        if (user == null){
+            result +="NOT have active user";
+        }else {
+            result = user.toString();
+        }
+        return result;
+    }
+
+    public String mostActiveApiByUsers(){
+        return this.apiProvider.mostActiveApi();
+    }
 
 }
