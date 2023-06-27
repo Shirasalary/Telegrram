@@ -15,10 +15,14 @@ public class Utils {
         return jCheckBox;
     }
 
-    public static JLabel newLabel (String text, int x, int y)
+    public static JLabel newLabel (String text, int x, int y , int type)
     {
         JLabel label = new JLabel(text);
-        label.setBounds(x,y,Constants.LABEL_WIDTH,Constants.LABEL_HEIGHT);
+        if (type == Constants.BIG_LABEL){
+            label.setBounds(x,y,Constants.LABEL_WIDTH,Constants.LABEL_HEIGHT);
+        } else if (type == Constants.SMALL_LABEL) {
+            label.setBounds(x,y,Constants.SMALL_LABEL_WIDTH,Constants.SMALL_LABEL_HEIGHT);
+        }
         label.setFont(Constants.myFont);
         label.setVisible(true);
         return label;
@@ -37,5 +41,23 @@ public class Utils {
         List<String> result = new ArrayList<>();
         result.addAll(Arrays.asList(array));
         return result;
+    }
+
+    public static void sleep(int seconds){
+        try {
+            Thread.sleep(seconds);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static JTextArea newTextArea (String text, int x, int y){
+
+        JTextArea textArea = new JTextArea(text);
+        textArea.setBounds(x, y,Constants.TEXT_AREA_WIDTH,Constants.TEXT_AREA_HEIGHT);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        return textArea;
     }
 }

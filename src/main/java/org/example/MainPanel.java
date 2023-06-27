@@ -18,16 +18,18 @@ public class MainPanel extends JPanel {
 
     private JLabel showOptions;
     private JLabel informationForUser;
+    private JLabel lastTenRequestsLabel;
 
     private Bot bot;
 
     private Statistics statistics;
 
+    private JTextArea lastTenRequestsTextArea;
+
     private JButton update;
     public MainPanel(int x, int y, int width, int height){
         this.setBounds(x,y,width,height);
         this.setLayout(null);
-        createObjects();
 
         try{
             TelegramBotsApi api = new TelegramBotsApi(DefaultBotSession.class);
@@ -37,7 +39,8 @@ public class MainPanel extends JPanel {
             throw new RuntimeException();
         }
 
-        //TODO איך לעדכן את פעילות הבוט תוך כדי תנועה? אולי ליצור את המחלקה בחוץ בפעולה בונה ואז לעשות סט לרשימה
+        createObjects();
+
         this.update.addActionListener((e) -> {
             if (isValidChoose()){
                 //כאן הבוט מתחיל לפעול
@@ -48,6 +51,13 @@ public class MainPanel extends JPanel {
             }
         });
 
+        new Thread(() ->{
+           while (true){
+               this.lastTenRequestsTextArea.setText(this.bot.getTenLastRequests());
+               Utils.sleep(Constants.NEED_TO_WAIT);
+           }
+        }).start();
+
         addObjects();
         this.setVisible(true);
     }
@@ -56,10 +66,10 @@ public class MainPanel extends JPanel {
 
         this.showOptions = Utils.newLabel("Type of bot activities:",
                 this.getX() +Constants.MARGIN_FROM_LEFT,
-                this.getY() +Constants.MARGIN_FROM_TOP);
+                this.getY() +Constants.MARGIN_FROM_TOP,Constants.BIG_LABEL);
         this.informationForUser = Utils.newLabel("Choose types",
                 this.getX() +Constants.MARGIN_FROM_LEFT,
-                this.getHeight() - 2*Constants.MARGIN_FROM_TOP - Constants.LABEL_HEIGHT );
+                this.getHeight() - 2*Constants.MARGIN_FROM_TOP - Constants.LABEL_HEIGHT,Constants.BIG_LABEL );
 
         // this.jokesCheckBox.isSelected(); בודק האם השדה סומן או לא
         this.jokesCheckBox = Utils.newCheckBox("Jokes"
@@ -83,6 +93,12 @@ public class MainPanel extends JPanel {
                 this.getWidth()- xStatistics,
                 this.getHeight()/4);
 
+        int xTextArea = this.showOptions.getX() + Constants.LABEL_WIDTH + Constants.TEXT_AREA_WIDTH/2;
+        this.lastTenRequestsLabel = Utils.newLabel("Last 10 Requests:",
+                xTextArea, this.statistics.getHeight() + Constants.MARGIN_FROM_TOP, Constants.BIG_LABEL);
+        this.lastTenRequestsTextArea = Utils.newTextArea("You dont have any request"
+                ,xTextArea
+                ,this.lastTenRequestsLabel.getY() + Constants.LABEL_HEIGHT + Constants.MARGIN_FROM_TOP );
 
     }
 
@@ -96,6 +112,8 @@ public class MainPanel extends JPanel {
         this.add(this.informationForUser);
         this.add(this.update);
         this.add(this.statistics);
+        this.add(this.lastTenRequestsTextArea);
+        this.add(this.lastTenRequestsLabel);
     }
 
     private List<String> getManagerChoose(){

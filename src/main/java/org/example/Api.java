@@ -19,12 +19,11 @@ public class Api {
         this.apiTypes = Constants.API_TYPES_NAME;
     }
 
-    //TODO לטפל במקרה שאין תגובה מהAPI
     public String getCountriesByeName(String endPath){
         this.countRequest[Constants.COUNTRY_API_CODE]++;
         String json =getJson(Constants.COUNTRY_API_PATH + endPath);
         String result = getMessage(json , Constants.COUNTRY_API);
-        System.out.println(2);
+
         return result;
     }
 

@@ -1,5 +1,8 @@
 package org.example;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class User {
 
     private static int ID = 0;
@@ -10,6 +13,8 @@ public class User {
 
     private int countRequest;
 
+    private Date currentTime;
+
     public User(long chatId){
         this.id = ID;
         ID++;
@@ -17,6 +22,10 @@ public class User {
         this.countRequest = 1;
         this.statusRequest = Constants.START_REQUEST;
         this.apiTypeRequest = "";
+    }
+
+    public void setDate() {
+       this.currentTime = new Date();
     }
 
     public boolean isEqualApiTypeRequest(String type) {
@@ -45,6 +54,14 @@ public class User {
 
     public boolean isEqualChatId(long toCheck){
         return this.chatId == toCheck;
+    }
+
+    public String summaryOfRequest(){
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        String formattedTime = dateFormat.format(this.currentTime);
+        return "id: " + this.chatId + "\nApi type request: " +this.apiTypeRequest
+                +"\nDate: " + formattedTime;
     }
 
     public String toString(){
