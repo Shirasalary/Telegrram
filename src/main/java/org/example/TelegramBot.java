@@ -11,7 +11,7 @@ public class TelegramBot extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLayout(null);
         this.setLocationRelativeTo(null);
-        this.setTitle("Telegram Bot by Shira & Hila & Sara");
+        this.setTitle("Telegram Bot by Shira & Sara");
         MainPanel mainPanel = new MainPanel(Constants.X_WINDOW, Constants.Y_WINDOW, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
         this.add(mainPanel);
         this.setVisible(true);
