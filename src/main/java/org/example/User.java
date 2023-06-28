@@ -19,7 +19,7 @@ public class User {
         this.id = ID;
         ID++;
         this.chatId = chatId;
-        this.countRequest = 1;
+        this.countRequest = 0;
         this.statusRequest = Constants.START_REQUEST;
         this.apiTypeRequest = "";
     }
@@ -46,6 +46,7 @@ public class User {
 
     public void addRequest(){
         this.countRequest++;
+        System.out.println(this.chatId + " -> " + this.countRequest);
     }
 
     public int getCountRequest() {
@@ -65,6 +66,6 @@ public class User {
     }
 
     public String toString(){
-        return "User -> Id Chat: " + this.chatId;
+        return "U->Id Chat: " + this.chatId;
     }
 }

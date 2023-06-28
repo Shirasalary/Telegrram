@@ -88,18 +88,18 @@ public class Country {
         for (int i = 0; i<this.languages.length; i++){
             result += this.languages[i];
             if (i != this.languages.length -1){
-                result +=" ,";
+                result +=", ";
             }
         }
-
+        result+=".";
         return result;
     }
 
     public String toString(){
-        return "name: " + this.name + "\ncountry 3 words code: " + this.alpha3Code +
-                "\ncapital: " + this.capital + "\nlanguages: " + getPrintLanguages()
-                + "\npopulation: " +this.population + "\nregion: " + this.region
-                + "\nindependent: " + this.independent + "\n";
+        return "Name: " + this.name + "\nCountry 3 words code: " + this.alpha3Code +
+                "\nCapital: " + this.capital + "\nLanguages: " + getPrintLanguages()
+                + "\nPopulation: " +this.population + "\nRegion: " + this.region
+                + "\nIndependent: " + this.independent + "\n";
     }
 
 }

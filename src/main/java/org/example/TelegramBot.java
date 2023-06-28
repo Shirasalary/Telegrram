@@ -5,6 +5,17 @@ import javax.swing.*;
 public class TelegramBot extends JFrame {
 
 
+    public static void main(String[] args) {
+        new TelegramBot();
+
+       // try{
+//            TelegramBotsApi api = new TelegramBotsApi(DefaultBotSession.class);
+//            api.registerBot(new ShiraBot());
+//        }catch (Exception e)
+//        {
+//            throw new RuntimeException();
+//        }
+    }
     public TelegramBot(){
         this.setSize(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
         this.setResizable(false);

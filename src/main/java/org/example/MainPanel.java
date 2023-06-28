@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import io.quickchart.QuickChart;
 
 public class MainPanel extends JPanel {
 
@@ -14,7 +15,7 @@ public class MainPanel extends JPanel {
     private JCheckBox countriesCheckBox;
     private JCheckBox changeMoneyCheckBox;
     private JCheckBox quotesCheckBox;
-    private JCheckBox weatherCheckBox;
+    private JCheckBox numberFactCheckBox;
 
     private JLabel showOptions;
     private JLabel informationForUser;
@@ -36,6 +37,7 @@ public class MainPanel extends JPanel {
             this.bot = new Bot(new ArrayList<>());
             api.registerBot(this.bot);
         }catch (Exception exception){
+            exception.printStackTrace();
             throw new RuntimeException();
         }
 
@@ -54,6 +56,7 @@ public class MainPanel extends JPanel {
         new Thread(() ->{
            while (true){
                this.lastTenRequestsTextArea.setText(this.bot.getTenLastRequests());
+
                Utils.sleep(Constants.NEED_TO_WAIT);
            }
         }).start();
@@ -81,11 +84,11 @@ public class MainPanel extends JPanel {
                 this.countriesCheckBox.getY() +Constants.CHECK_BOX_HEIGHT +Constants.MARGIN_FROM_TOP);
         this.quotesCheckBox = Utils.newCheckBox("Quotes" ,this.showOptions.getX(),
                 this.changeMoneyCheckBox.getY() +Constants.CHECK_BOX_HEIGHT +Constants.MARGIN_FROM_TOP);
-        this.weatherCheckBox = Utils.newCheckBox("Weather" ,this.showOptions.getX(),
+        this.numberFactCheckBox = Utils.newCheckBox("Num facts" ,this.showOptions.getX(),
                 this.quotesCheckBox.getY() +Constants.CHECK_BOX_HEIGHT +Constants.MARGIN_FROM_TOP);
 
         this.update = Utils.newButton("Update", this.getX() +Constants.MARGIN_FROM_LEFT,
-                this.weatherCheckBox.getY()+Constants.CHECK_BOX_HEIGHT +Constants.MARGIN_FROM_TOP );
+                this.numberFactCheckBox.getY()+Constants.CHECK_BOX_HEIGHT +Constants.MARGIN_FROM_TOP );
 
         int xStatistics = this.showOptions.getX() + (Constants.LABEL_WIDTH/4)*3 ;
         this.statistics = new Statistics(this.bot,xStatistics
@@ -106,7 +109,7 @@ public class MainPanel extends JPanel {
         this.add(this.jokesCheckBox);
         this.add(this.countriesCheckBox);
         this.add(this.quotesCheckBox);
-        this.add(this.weatherCheckBox);
+        this.add(this.numberFactCheckBox);
         this.add(this.changeMoneyCheckBox);
         this.add(this.showOptions);
         this.add(this.informationForUser);
@@ -121,8 +124,8 @@ public class MainPanel extends JPanel {
         if (this.jokesCheckBox.isSelected()){
             managerChoose.add(Constants.JOKE_API);
         }
-        if (this.weatherCheckBox.isSelected()){
-            managerChoose.add("Weather");
+        if (this.numberFactCheckBox.isSelected()){
+            managerChoose.add(Constants.NUM_FACT_API);
         }
         if (this.quotesCheckBox.isSelected()){
             managerChoose.add(Constants.QUOTE_API);
@@ -142,7 +145,7 @@ public class MainPanel extends JPanel {
         if (this.jokesCheckBox.isSelected()){
             count++;
         }
-        if (this.weatherCheckBox.isSelected()){
+        if (this.numberFactCheckBox.isSelected()){
             count++;
         }
         if (this.quotesCheckBox.isSelected()){

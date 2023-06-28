@@ -20,38 +20,49 @@ public class Api {
     }
 
     public String getCountriesByeName(String endPath){
-        this.countRequest[Constants.COUNTRY_API_CODE]++;
-        String json =getJson(Constants.COUNTRY_API_PATH + endPath);
-        String result = getMessage(json , Constants.COUNTRY_API);
-
-        return result;
+        return getApiTable(Constants.COUNTRY_API_CODE,
+                Constants.COUNTRY_API_PATH + endPath,
+                Constants.COUNTRY_API );
     }
 
-    public String getJokeByLanguage(String language){
-        this.countRequest[Constants.JOKE_API_CODE]++;
-        String json =getJson(Constants.JOKE_API_PATH + language);
-        String result = getMessage(json , Constants.JOKE_API);
 
-        return result;
+
+    public String getJokeByLanguage(String language){
+
+        return getApiTable(Constants.JOKE_API_CODE
+                ,Constants.JOKE_API_PATH + language
+                ,Constants.JOKE_API );
     }
 
     public String getQuoteByTag(String tag){
-        this.countRequest[Constants.QUOTE_API_CODE]++;
-        String json =getJson(Constants.QUOTE_API_PATH_START + tag + Constants.QUOTE_API_PATH_END);
-        String result = getMessage(json , Constants.QUOTE_API);
 
-        return result;
+        return getApiTable(Constants.QUOTE_API_CODE
+                ,Constants.QUOTE_API_PATH_START + tag + Constants.QUOTE_API_PATH_END
+                , Constants.QUOTE_API);
 
     }
     public String getExchange(String coins){
-        this.countRequest[Constants.EXCHANGE_API_CODE]++;
-        String json =getJson(Constants.EXCHANGE_API_PATH + coins);
-        String result = getMessage(json , Constants.EXCHANGE_API);
 
-        return result;
+        return getApiTable(Constants.EXCHANGE_API_CODE,
+                Constants.EXCHANGE_API_PATH + coins,
+                Constants.EXCHANGE_API );
 
     }
 
+    public String getNumFact(){
+
+        return getApiTable(Constants.NUM_FACT_API_CODE
+                ,Constants.NUM_FACT_API_PATH ,
+                Constants.NUM_FACT_API );
+
+    }
+
+    private String getApiTable(int apiCode, String allPath, String apiName){
+        this.countRequest[apiCode]++;
+        String json =getJson(allPath);
+        String result = getMessage(json , apiName);
+        return result;
+    }
 
     private String getMessage(String json , String apiType){
         String message ="";
@@ -63,17 +74,17 @@ public class Api {
                     List<Country> countries = objectMapper.readValue(json, new TypeReference<>() {});
                     for (int i =0;i< countries.size();i++){
                         message +=countries.get(i).toString();
-                        message+="borders: ";
+                        message+="Borders: ";
                         List<String> borders = countries.get(i).getBorders();
                         for (int j = 0; j< borders.size();j++ ){
                             String jsonBorder = getJson(Constants.COUNTRY_CODE_API_PATH+ borders.get(j));
                             Country border = objectMapper.readValue(jsonBorder, new TypeReference<>() {});;
                             message += border.getName() ;
-                            if (i != borders.size()-2){
-                                message+= ", ";
+                            if (i != borders.size()-3){
+                                message+= " ,";
                             }
                         }
-                        message+="\n";
+                        message+=".\n";
                     }
 
                 } else if (apiType.equals(Constants.JOKE_API)) {
@@ -87,6 +98,9 @@ public class Api {
 
                     Exchange exchange = objectMapper.readValue(json, new TypeReference<>() {});
                     message+= exchange.toString();
+                } else if (apiType.equals(Constants.NUM_FACT_API)) {
+                    NumberFacts numberFact =objectMapper.readValue(json, new TypeReference<>() {});
+                    message+= numberFact.toString();
                 }
             }else {
                 message +="misinformation :(";
@@ -132,64 +146,16 @@ public class Api {
         return result;
     }
 
-
-//    private List<Country> startApi(String path , int typeResult ){
-//        AtomicReference<List<Country>> result = new AtomicReference<>();
-//        AtomicBoolean isDone = new AtomicBoolean(false);
-//        new Thread(() -> {
-//
-//            try {
-//                GetRequest getRequest = Unirest.get(path);
-//                HttpResponse<String> response = getRequest.asString(); //איך לקבל את המידע כמחרוזת
-//                System.out.println("Code:");
-//                System.out.println(response.getStatus());
-//                //200-OK מעולה
-//                //404 - NOT FOUND הבעיה אצלנו
-//                //500 - SERVER ISSUE אנחנו עשינו הכל טוב, הבעיה היא אצל הספק
-//                String json = response.getBody();
-//                ObjectMapper objectMapper = new ObjectMapper();//הופך את המחרוזת לאובייקט
-//
-//                result.set(objectMapper.readValue(json, new TypeReference<>() {}));
-//                isDone.set(true);
-//
-//            }catch (Exception e){
-//
-//                e.printStackTrace();
-//            }
-//        }).start();
-//
-//        while (!isDone.get()){
-//            System.out.print("");
-//        }
-//        return result.get();
-//    }
+    public String getCountApi(){
+        String result = "";
+        for (int i =0; i<this.countRequest.length;i++){
+            result+=this.countRequest[i];
+            if (i<= this.countRequest.length-2){
+                result+=",";
+            }
+        }
+        return result;
+    }
 
 
-    //TODO לשים בטרד
-//    private <T> List<T> startApi (String path , int typeResult , T ob ){
-//
-//        List<T> result = List.of(ob);
-//        try {
-//            GetRequest getRequest = Unirest.get(path);
-//            HttpResponse<String> response = getRequest.asString(); //איך לקבל את המידע כמחרוזת
-//            System.out.println("Code:");
-//            System.out.println(response.getStatus());
-//            //200-OK מעולה
-//            //404 - NOT FOUND הבעיה אצלנו
-//            //500 - SERVER ISSUE אנחנו עשינו הכל טוב, הבעיה היא אצל הספק
-//            String json = response.getBody();
-//            ObjectMapper objectMapper = new ObjectMapper();//הופך את המחרוזת לאובייקט
-//
-//            if (typeResult == Constants.LIST_TYPE){
-//                result =  objectMapper.readValue(json, new TypeReference<>() {});
-//            } else if (typeResult == Constants.SINGLE_TYPE) {
-//                T apiSingleResult = objectMapper.readValue(json, new TypeReference<>() {});
-//                result.add(apiSingleResult);
-//            }
-//        }catch (Exception e){
-//
-//            e.printStackTrace();
-//        }
-//       return result;
-//    }
 }
