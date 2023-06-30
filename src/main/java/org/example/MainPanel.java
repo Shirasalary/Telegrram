@@ -28,6 +28,8 @@ public class MainPanel extends JPanel {
     private JTextArea lastTenRequestsTextArea;
 
     private JButton update;
+
+    private Graph graph;
     public MainPanel(int x, int y, int width, int height){
         this.setBounds(x,y,width,height);
         this.setLayout(null);
@@ -103,6 +105,14 @@ public class MainPanel extends JPanel {
                 ,xTextArea
                 ,this.lastTenRequestsLabel.getY() + Constants.LABEL_HEIGHT + Constants.MARGIN_FROM_TOP );
 
+        int xGraph = this.lastTenRequestsLabel.getX() + Constants.LABEL_WIDTH + Constants.MARGIN_FROM_LEFT;
+        int yGraph = this.lastTenRequestsLabel.getY();
+        this.graph = new Graph(xGraph,
+                yGraph,
+                this.getWidth() - xGraph,
+                this.getHeight() - yGraph,
+                        this.bot);
+
     }
 
     private void addObjects(){
@@ -117,6 +127,7 @@ public class MainPanel extends JPanel {
         this.add(this.statistics);
         this.add(this.lastTenRequestsTextArea);
         this.add(this.lastTenRequestsLabel);
+        this.add(this.graph);
     }
 
     private List<String> getManagerChoose(){
